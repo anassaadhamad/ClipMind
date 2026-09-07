@@ -34,6 +34,14 @@ ClipMind uses **GPT-4o** to find your most compelling moments, **Whisper** for w
 
 ---
 
+## 📸 Screenshot
+
+![ClipMind Desktop GUI](docs/screenshot.png)
+
+*Dark-mode desktop GUI — Dashboard with drag-and-drop video input, viral score cards, and sidebar navigation.*
+
+---
+
 ## 🏗️ Architecture
 
 ```

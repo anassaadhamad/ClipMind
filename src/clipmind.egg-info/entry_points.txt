@@ -1,0 +1,3 @@
+[console_scripts]
+clipmind = clipmind.cli:app
+clipmind-gui = clipmind.gui:main

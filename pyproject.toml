@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clipmind"
+version = "0.1.0"
+description = "AI-powered CLI for extracting viral short-form clips from long-form videos."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "ClipMind" }]
+dependencies = [
+    "openai>=1.35.0",
+    "python-dotenv>=1.0.1",
+    "pydantic>=2.7.0",
+    "typer>=0.12.3",
+    "rich>=13.7.1",
+    "tqdm>=4.66.4",
+    "opencv-python>=4.9.0.80",
+    "mediapipe>=0.10.14",
+    "numpy>=1.26.4",
+    "PySide6>=6.7.0",
+    "moviepy>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+]
+
+[project.scripts]
+clipmind = "clipmind.cli:app"
+clipmind-gui = "clipmind.gui:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

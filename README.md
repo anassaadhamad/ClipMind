@@ -1,0 +1,134 @@
+# ClipMind Viral Clips Studio
+
+ClipMind is a Python desktop app and CLI for extracting short-form clips from long
+videos. It uses Whisper word timestamps, GPT-4o viral segment analysis, FFmpeg,
+OpenCV, MediaPipe, and Pillow-rendered dynamic captions.
+
+## Features
+
+- Extracts audio with FFmpeg and caches Whisper word-level transcripts.
+- Finds 3-5 high-potential viral moments with strict JSON clip metadata.
+- Cuts source video into precise segments.
+- Auto-reframes clips to 9:16 with smoothed face tracking.
+- Burns 2-4 word captions with active word highlighting.
+- Supports optional `.srt` reference subtitles: ClipMind aligns perfect SRT text
+  onto Whisper word-level timestamps for more accurate Arabic captions and AI context.
+- Adds viral finishing hooks: optional word-synced pop/whoosh SFX and full-color
+  emoji caption rendering with a subtle pop-in animation.
+- Writes CMX 3600 EDL files for Premiere Pro or DaVinci Resolve workflows.
+- Includes a PySide6 dark-mode desktop GUI with drag and drop, viral score cards,
+  caption style controls, threaded processing, progress, and live logs.
+- Generates platform-native social media titles, descriptions, CTAs, and hashtags
+  for YouTube, Facebook, and TikTok using current publishing best practices.
+- Centralizes project values in `.env`.
+
+## Requirements
+
+- Python 3.10+
+- FFmpeg and FFprobe available on `PATH`
+- OpenAI API key
+- A bold `.ttf` or `.otf` font that supports Arabic and English
+
+## Setup
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+Copy-Item .env.example .env
+```
+
+Place your font in `assets/fonts/` and update `FONT_PATH` in `.env`.
+
+At minimum, set:
+
+```env
+OPENAI_API_KEY=sk-your-key-here
+FONT_PATH=assets/fonts/YourFont.ttf
+```
+
+## Folder Layout
+
+- `input_videos/`: optional default input location
+- `cache/`: Whisper transcripts, GPT clip JSON, and tracking metadata
+- `outputs/`: rendered MP4 clips and EDL exports
+- `temp/`: extracted audio and intermediate video files
+- `assets/fonts/`: caption fonts
+- `assets/sfx/`: optional pop/whoosh sound effects for word-synced caption SFX
+
+## Usage
+
+Launch the desktop GUI:
+
+```powershell
+clipmind gui
+```
+
+Or:
+
+```powershell
+clipmind-gui
+```
+
+The GUI lets you drag and drop a video, analyze viral clips, process individual
+clip cards, process all clips, customize caption font/color/stroke settings, and
+watch logs without freezing the interface. The Social Media Hub stores creator
+profile links with local `QSettings`, then generates per-platform YouTube,
+TikTok, and Facebook strategies with 3 alternative titles, SEO-friendly
+descriptions, CTAs, hashtags, and one-click copy buttons.
+
+If you have corrected subtitles, use the Dashboard's optional
+`Reference Subtitles (.srt)` picker before analyzing. The app will use SRT text
+as the ground truth while preserving Whisper's millisecond word timestamps.
+
+To enable word-synced sound effects, place a short SFX file at
+`assets/sfx/pop.mp3` or update `SFX_POP_PATH` in `.env`. If no SFX file exists,
+ClipMind renders normally without sound effects.
+
+Run the full pipeline:
+
+```powershell
+clipmind process input_videos\long_video.mp4 --clips 5
+```
+
+Run with a reference subtitle file:
+
+```powershell
+clipmind process input_videos\long_video.mp4 --srt input_videos\long_video.srt --clips 5
+```
+
+Analyze only and skip rendering:
+
+```powershell
+clipmind process input_videos\long_video.mp4 --dry-run
+```
+
+Generate or reuse a cached transcript:
+
+```powershell
+clipmind transcribe input_videos\long_video.mp4
+```
+
+Use a cached transcript to run only GPT analysis:
+
+```powershell
+clipmind analyze input_videos\long_video.mp4 --clips 3
+```
+
+## Notes
+
+- Cached transcript files prevent repeated Whisper API calls while testing.
+- Cached clip JSON prevents repeated GPT calls unless `--force-analysis` is used.
+- Pillow must be built with RAQM for best Arabic shaping. The selected font still
+  needs to support Arabic glyphs.
+- Video rendering requires a real font path; dry-run analysis does not.
+
+## Tests
+
+```powershell
+pytest
+```
+
+The included tests cover JSON validation, caption grouping, timestamp filtering,
+timecode formatting, and EDL generation. Full media rendering should be validated
+with a short sample video after configuring `.env`.
